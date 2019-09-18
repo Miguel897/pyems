@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="pyems",
     version="0.0.1",
-    author="Miguel Munoz",
-    author_email="miguelangel@gmail.com",
+    author="Miguel Angel Munoz",
+    author_email="miguelangeljmd@gmail.com",
     description="Energy Management System Toolkit for Smart Buildings.",
     long_description=long_description,
     long_description_content_type="text/markdown",

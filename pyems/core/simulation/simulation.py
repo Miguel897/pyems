@@ -13,14 +13,15 @@ from pyems.core.utils.time import (
     timestep_conversion, split_timestep, local_to_utc, utc_to_local, get_current_time, find_next_step_start,
     get_following_midnight_utc_timestamp, get_fix_simulation_length_end_timestamp, timestep_to_seconds
 )
+from pyems.core.utils.singleton import Singleton
 
 
-class Simulation(Entity):
+class Simulation(Entity, metaclass=Singleton):
 
     def __init__(self, timestep, current_time=None):
         super().__init__(name='Simulation', entity_type='simulation')
 
-        self._simulation, self._system, self._optimizer = None, None, None
+        self._system, self._optimizer = None, None
         self.start, self.end, self.periods, self.interval = None, None, None, None
         self.results = None
         self.simulation_mode = None
@@ -51,7 +52,6 @@ class Simulation(Entity):
     @optimizer.setter
     def optimizer(self, optimizer):
         if isinstance(optimizer, Optimizer):
-            optimizer.simulation = self
             self._optimizer = weakref.ref(optimizer)
         else:
             ValueError('Error assigning optimizer to the simulation.')
@@ -69,7 +69,6 @@ class Simulation(Entity):
     @system.setter
     def system(self, system):
         if isinstance(system, System):
-            system.simulation = self
             self._system = weakref.ref(system)
         else:
             ValueError('Error assigning system to the simulation.')

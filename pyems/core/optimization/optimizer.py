@@ -63,7 +63,7 @@ class Optimizer(Entity):
         self.solver_info_file_name = solver_info_file_name
         self.readable_model_file_name = readable_model_file_name
         self.info_path = info_path
-        self.logger = logging.getLogger("pyems.optimization.Optimizer")
+        self.logger = logging.getLogger("pyems.Optimizer")
 
         # Results
 

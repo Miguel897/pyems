@@ -1,6 +1,5 @@
 
 import logging
-import weakref
 from functools import reduce
 
 import numpy
@@ -8,9 +7,6 @@ import numpy
 from pyems.config import ElectricalType, ElectricalLoadSubType, ElectricalGeneratorSubType
 from pyems.core.entity.entity import Entity
 from pyems.core.components.base import BaseSystemComponent
-from pyems.core.components.electrical import (
-    BaseElectricalGenerator, BaseElectricalLoad, ElectricalBattery, ElectricalExternalGrid
-)
 
 
 class System(Entity):
@@ -21,7 +17,6 @@ class System(Entity):
     def __init__(self, name):
         super().__init__(name, entity_type='system')
 
-        self._simulation = None
         self.entities = {}
         self.electrical_generators = {key: [] for key in ElectricalGeneratorSubType}
         self.electrical_loads = {key: [] for key in ElectricalLoadSubType}
@@ -40,7 +35,7 @@ class System(Entity):
 
         self.stochastic_electrical_gen = None
         self.fix_electrical_load = None
-        self.logger = logging.getLogger("ems.system_entities.System")
+        self.logger = logging.getLogger("pyems.System")
         self.logger.info('Creating System definition.')
 
     def __setattr__(self, name, value):
@@ -49,20 +44,6 @@ class System(Entity):
             self.entities[value.id] = value
             if isinstance(value, BaseSystemComponent):
                 self._add_component(value)
-
-    @property
-    def simulation(self):
-        if not self._simulation:
-            return self._simulation
-        _simulation = self._simulation()
-        if _simulation:
-            return _simulation
-        else:
-            raise LookupError("Referenced simulation was deleted.")
-
-    @simulation.setter
-    def simulation(self, simulation):
-        self._simulation = weakref.ref(simulation)
 
     def get_electrical_generators_list(self):
         return reduce((lambda x, y: x + y), self.electrical_generators.values())

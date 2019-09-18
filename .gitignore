@@ -1,0 +1,22 @@
+# Git file to set which files I don't want to back up.
+# This file has nothing to do with the Home Assistant
+# This file is related with Git version control in .git folder
+
+# Ignore folders.
+_notes/
+
+# Ignore files.
+aux_create_input_files.py
+*.txt
+*.csv
+*.xlsx
+
+# Pycharm cache
+**/.idea
+
+# Python cache
+/__pycache__
+*.pyc
+
+# Whitelist
+!requirements.txt

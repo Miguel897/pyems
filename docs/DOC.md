@@ -9,7 +9,9 @@ Energy Management System (EMS) Toolkit for Smart Buildings based on Python. An E
 This toolkit provides two well differentiated modes of operation:
 + Simulation: Reproduce the operation of the EMS Based on a data set. This mode is useful for research purposes as well as to tune the parameters of the EMS and make economical evaluations. This can be run without any third-party software apart from the required python packages and optimization solver.  
 + Operation: Deployment of an EMS that actually controls a system. The system automatically collects the data from different sources (databases, APIs, csv…), run an optimization model and returns the results. This mode requires the use of a third-party tools to work. 
-+ Deployment
+
+## Deployment
+
 An Automation System (AS) like Home Assistance (HASS) could be used to monitor an operate the building. This means collecting data of the different devices (PV panels, building load, temperature…) into a permanent storage like a database and actuate building’s devices, switching them on/off or controlling a certain parameter. Task schedulers like Windows task scheduler or Linux cron jobs could also be used in conjunction with the AS or without it, to run the EMS at a determine frequency. The function of the latter group could be also assumed by the Automation System. 
 
 ## Features
@@ -20,7 +22,7 @@ The main features of the pyems are:
 + Integration of forecast tools: like Facebook Prophet or scikit-learn.
 + Optimization: MIP optimization based on Pyomo (python based optimization modeling language) and GLPK open source solver.
 
-## Mian Entities
+## Main Entities
 
 The main entities (classes) of the core package are:
 + Simulation: singleton (only one instance is allowed) that control the execution process and stores general and temporal parameters of the execution like the number of time periods ahead to optimize or the timestep resolution.

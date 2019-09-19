@@ -102,7 +102,7 @@ For real operation a third-party software mayb required. An Automation System (A
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and how to contribute.
 
 ## Versioning
 
@@ -112,7 +112,7 @@ The versioning follow the scheme major.minor.patch. Patch in general won't break
 
 * **Miguel Angel Munoz** - *Main developer* 
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of contributors who participated in this project.
 
 ## License
 

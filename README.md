@@ -1,45 +1,124 @@
 # Energy Management System
 
-This is a simple example package. You can use
-[Github-flavored Markdown](https://guides.github.com/features/mastering-markdown/)
-to write your content
+Note: this toolkit is in a very preliminary state and some of the features mentioned here are not yet available.
 
-https://help.github.com/en/articles/basic-writing-and-formatting-syntax
+Open Energy Management System (EMS) Toolkit for Smart Buildings based on Python. An EMS is a program that make decisions on how to operate different devices of the building (battery SOC, AC temperature, when to switch on the washing machine…) based on the knowledge of the system (building model, historical data, forecasts…) and user comfort preferences. This repository provides tools to simplify and ease the deployment of your own custom EMS. Currently this toolkit is in a very preliminary state and some of the features mentioned here are not yet available.
 
-# A sample Python project
+This toolkit provides two different modes of operation:
++ Simulation: Reproduce the operation of the EMS Based on a data set. This mode is useful for research purposes as well as to tune the parameters of the EMS and make economical evaluations. This can be run without any third-party software apart from the required python packages and optimization solver.  
++ Operation: Deployment of an EMS that actually controls a system. The system automatically collects the data from different sources (databases, APIs, csv…), run an optimization model and returns the results. This mode requires the use of a third-party tools to work. 
 
-A sample project that exists as an aid to the [Python Packaging User
-Guide][packaging guide]'s [Tutorial on Packaging and Distributing
-Projects][distribution tutorial].
+## Features
 
-This project does not aim to cover best practices for Python project
-development as a whole. For example, it does not provide guidance or tool
-recommendations for version control, documentation, or testing.
+The main features of the pyems are:
++ Modular construction: the pyems toolkit is not a final product but instead a toolkit that provides different entities (classes) and functions that can be combined together to create your own custom EMS. 
++ I/O tools: allow a custom data flow while ease the input/output of data from/to different data sources like csv files, InfluxDB, APIs…
++ Integration of forecast tools: like Facebook Prophet or scikit-learn.
++ Optimization: MIP optimization based on Pyomo (python based optimization modeling language) and GLPK open source solver.
 
-[The source for this project is available here][src].
+## Documentation
 
-Most of the configuration for a Python project is done in the `setup.py` file,
-an example of which is included in this project. You should edit this file
-accordingly to adapt this sample project to your needs.
+In the docs folder you could find more documentation regarding the Toolkit.
 
-----
+## Getting Started
 
-This is the README file for the project.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-The file should use UTF-8 encoding and can be written using
-[reStructuredText][rst] or [markdown][md use] with the appropriate [key set][md
-use]. It will be used to generate the project webpage on PyPI and will be
-displayed as the project homepage on common code-hosting services, and should be
-written for that purpose.
+### Prerequisites
 
-Typical contents for this file would include an overview of the project, basic
-usage examples, etc. Generally, including the project changelog in here is not a
-good idea, although a simple “What's New” section for the most recent version
-may be appropriate.
+The required packages are:
 
-[packaging guide]: https://packaging.python.org
-[distribution tutorial]: https://packaging.python.org/tutorials/packaging-projects/
-[src]: https://github.com/pypa/sampleproject
-[rst]: http://docutils.sourceforge.net/rst.html
-[md]: https://tools.ietf.org/html/rfc7764#section-3.5 "CommonMark variant"
-[md use]: https://packaging.python.org/specifications/core-metadata/#description-content-type-optional
+```
+DateTime pytz numpy pandas matplotlib Pyomo glpk pysolar fbprophet
+```
+Optional requirements:
+```
+influxdb
+```
+
+### Installing
+
+The simpler approach is to copy the source file of project and create an environment. If you are using the fbprophet package to issue the forecasts then the Anaconda environments are strongly recommended due to some issue in the installation of pystan used by Anaconda.
+
+Download the source files in a folder and create your own implementation project at the same level.
+
+```
+root_folder/
+│
+├── pyems/
+│   ├── pyems/
+│   └── other_files.*
+│   
+└── your_implementation/
+    ├── main.py
+    └── your_modules.py
+```
+
+Create an Anaconda environment:
+```
+conda create --name ems_env
+```
+
+Install the requirements:
+
+```
+conda install --file /path/to/pyems/requirements.txt
+```
+
+In the main.py include the following code:
+
+```
+import os
+import sys
+sys.path.append(os.path.abspath(r'..\pyems'))
+import pyems.environ as ems
+```
+
+Now, in your main.py you can create the entities like this:
+```
+system = ems.System(name='your_system')
+```
+
+## Running the tests
+
+The tests are located in the tests folder in the root of the repository. The tests are created with unittest.
+
+```
+pyems/
+   ├── pyems/
+   ├── tests/
+   └── other_files.*
+```
+
+## Deployment
+
+For real operation a third-party software mayb required. An Automation System (AS) like Home Assistance (HASS) could be used to monitor an operate the building. This means collecting data of the different devices (PV panels, building load, temperature…) into a permanent storage like a database and actuate building’s devices, switching them on/off or controlling a certain parameter. Task schedulers like Windows task scheduler or Linux cron jobs could also be used in conjunction with the AS or without it, to run the EMS at a determine frequency. The function of the latter group could be also assumed by the Automation System. 
+
+## Built With
+
+* [Pyomo](http://www.pyomo.org/) - Pyomo is a Python-based, open-source optimization modeling language
+* [GLPK](https://www.gnu.org/software/glpk/) - GNU Linear Programming Kit
+* [FB Prophet](https://facebook.github.io/prophet/docs/quick_start.html) - Forecasting tool developed by Facebook
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+The versioning follow the scheme major.minor.patch. Patch in general won't break the compatibility from one to another. Minor version changes probably creates backward compatibility issues. Major versions implies major changes in the stability and capability of the software.
+
+## Authors
+
+* **Miguel Angel Munoz** - *Initial work* 
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the GNU General Public License v3 (GPLv3) - see the [LICENSE](LICENSE) file for details.
+
+<!---
+## Acknowledgments
+For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+--->

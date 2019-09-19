@@ -2,7 +2,7 @@
 
 Note: this toolkit is in a very preliminary state and some of the features mentioned here are not yet available.
 
-Open Energy Management System (EMS) Toolkit for Smart Buildings based on Python. An EMS is a program that make decisions on how to operate different devices of the building (battery SOC, AC temperature, when to switch on the washing machine…) based on the knowledge of the system (building model, historical data, forecasts…) and user comfort preferences. This repository provides tools to simplify and ease the deployment of your own custom EMS. Currently this toolkit is in a very preliminary state and some of the features mentioned here are not yet available.
+Open Energy Management System (EMS) Toolkit for Smart Buildings based on Python. An EMS is a program that make decisions on how to operate different devices of the building (battery SOC, AC temperature, when to switch on the washing machine…) based on the knowledge of the system (building model, historical data, forecasts…) and user comfort preferences. This repository provides tools to simplify and ease the deployment of your own custom EMS.
 
 This toolkit provides two different modes of operation:
 + Simulation: Reproduce the operation of the EMS Based on a data set. This mode is useful for research purposes as well as to tune the parameters of the EMS and make economical evaluations. This can be run without any third-party software apart from the required python packages and optimization solver.  
@@ -110,7 +110,7 @@ The versioning follow the scheme major.minor.patch. Patch in general won't break
 
 ## Authors
 
-* **Miguel Angel Munoz** - *Initial work* 
+* **Miguel Angel Munoz** - *Main developer* 
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 

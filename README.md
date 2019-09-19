@@ -38,7 +38,9 @@ influxdb
 
 ### Installing
 
-The simpler approach is to copy the source file of project and create an environment. If you are using the fbprophet package to issue the forecasts then the Anaconda environments are strongly recommended due to some issue in the installation of pystan used by Anaconda.
+The simpler approach is to copy the source file of project and create an environment. If you are using the fbprophet package to issue the forecasts then the Anaconda environments are strongly recommended due to some issue in the installation of pystan on Windows used by Anaconda. See:
+[Fb Prophet intallation docs](https://facebook.github.io/prophet/docs/installation.html)
+[Pystan on Windows](https://pystan.readthedocs.io/en/latest/windows.html)
 
 Download the source files in a folder and create your own implementation project at the same level.
 

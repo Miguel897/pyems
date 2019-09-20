@@ -21,7 +21,7 @@ class Results(Entity):
         self.logger = logging.getLogger(f'{Parameter.PACKAGE_NAME}.Results')
         self.timestamp = timestamp.strftime(Parameter.FILE_DATETIME_FORMAT)
 
-    def write_results_to_file(self, file_name='results.csv', file_path=''):
+    def write_results_to_csv(self, file_name='results.csv', file_path=''):
         file_name = self.timestamp + '_' + file_name
         self.logger.info(f'Writing results to {file_name} file.')
         display_results = self.raw_results.copy()
@@ -47,7 +47,7 @@ class Results(Entity):
     def write_target_soc_to_txt_file(
             self, file_name: str = 'soc_target.txt', file_path: str = None, mode: str = 'w'):
 
-        with open(self.timestamp_label + os.path.join(file_path, file_name), mode=mode) as file:
+        with open(self.timestamp + os.path.join(file_path, file_name), mode=mode) as file:
             file.write(str(round(self.target_soc * 100, 2)))
 
     def plot(self):

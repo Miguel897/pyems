@@ -24,6 +24,7 @@ from pyomo.environ import SolverFactory
 from pyomo.opt.results.solver import SolverStatus as SolSt, TerminationCondition as TermCond
 
 # Local application imports
+from pyems.config import Parameter
 from pyems.core.entity.entity import Entity
 from pyems.core.optimization.utils import combine_positive_negative_variables, readable_pyomo_model
 from pyems.core.results.results import Results
@@ -59,7 +60,6 @@ class Optimizer(Entity):
         self.full_solver_info = full_solver_info
         self.display_solver_info = display_solver_info
         self.write_solver_info = write_solver_info
-        self.hourly_timestamp = datetime.now().strftime('%Hh')
         self.solver_info_file_name = solver_info_file_name
         self.readable_model_file_name = readable_model_file_name
         self.info_path = info_path
@@ -277,9 +277,11 @@ class Optimizer(Entity):
 
         self.logger.info('Solving optimization model.')
 
+        file_timestamp = config['start'].strftime(Parameter.FILE_DATETIME_FORMAT)
+
         # Optimization model pre-resolution. We save it in case of a failure solving the model
         readable_model = readable_pyomo_model(self.optimization_model)
-        file_name = self.hourly_timestamp + '_' + self.readable_model_file_name
+        file_name = file_timestamp + '_' + self.readable_model_file_name
         if self.write_solver_info:
             with open(join(self.info_path, file_name), 'w') as f:
                 f.write(readable_pyomo_model(self.optimization_model))
@@ -320,7 +322,7 @@ class Optimizer(Entity):
         # Save full model information to a file.
         
         if self.write_solver_info:
-            file_name = self.hourly_timestamp + '_' + self.solver_info_file_name
+            file_name = file_timestamp + '_' + self.solver_info_file_name
             with open(join(self.info_path, file_name), 'w') as f:
                 f.write('Solver output:\n\n')
                 solver_output.write(ostream=f)

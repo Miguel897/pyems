@@ -90,7 +90,7 @@ class Simulation(Entity, metaclass=Singleton):
         config = {attribute: getattr(self, attribute) for attribute in attributes}
         return config
 
-    def run_rolling_window(self, rolling_interval, rolling_step, system=None, optimizer=None,):
+    def run_rolling_window(self, rolling_interval, rolling_step, system=None, optimizer=None, results_path=None):
         self.logger.info('Running simulation.')
 
         if system is not None and self.system is None:
@@ -109,11 +109,15 @@ class Simulation(Entity, metaclass=Singleton):
         if self.optimizer is None:
             raise ValueError('An optimizer is required.')
 
-        rolling_step = timestep_conversion(rolling_step, pd_units=True)
+        rolling_step = timestep_conversion(
+            rolling_step, pd_units=True, check_hour_subdivision=False, check_length=False
+        )
+
         time_range = pandas.date_range(start=rolling_interval[0], end=rolling_interval[1], freq=rolling_step)
 
         for step in time_range:
-            self.run_single_step(current_time=step)
+            results = self.run_single_step(current_time=step)
+            results.write_results_to_csv(file_path=results_path)
             self.system.clear()
             self.optimizer.clear()
             self.clear()
@@ -144,12 +148,13 @@ class Simulation(Entity, metaclass=Singleton):
 
         if simulation_end == 'fix':
             self.end = get_fix_simulation_length_end_timestamp(self.start, simulation_length=simulation_length)
+
         elif simulation_end == 'prices_availability':
             if self.system.has_external_grid:
 
                 """Assume we are at day D and we want to run the simulation, at least, for the remaining of day D."
-                The next day is D+1. We want the prices of the remaining of the D plus, if available, the prices of day D+1. 
-                Therefore, we'll need the utc time corresponding to 
+                The next day is D+1. We want the prices of the remaining of the D plus, if available, the prices of day 
+                D+1. Therefore, we'll need the utc time corresponding to 
                 the midnight between day D and D+1 or between D+1 and D+2 (depending on prices availability).
                 """
                 publication_time = self.system.get_external_grid_object().publication_time
@@ -164,6 +169,7 @@ class Simulation(Entity, metaclass=Singleton):
                     f'on prices availability because there is no grid in the system.'
                 )
                 raise ValueError(message)
+
         elif simulation_end == 'midnight_ahead':
             self.end = get_following_midnight_utc_timestamp(
                 self.current_time, local_tz=self.local_tz, midnight_ahead=midnight_ahead

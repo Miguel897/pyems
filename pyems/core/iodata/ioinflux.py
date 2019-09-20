@@ -59,7 +59,7 @@ def get_hourly_stored_series(time_interval, timestep, upsample_values=False, **k
 def get_df_from_influxdb(
         entities, function='INTEGRAL', time_interval=None, timestep='1h', query_extra_conditions=None,
         db_credentials=None, db_network_route=None, ssl=False, utc_labeled=False,
-        series_names=None, check_before_utc_now=True,
+        series_names=None, check_before_utc_now=True, check_timestep_length=True, check_timestep_hour_subdivision=True
 ):
     """Query SGIL DB for an specific data series and function and return the result in df form. The database store data
     in utc time and then the interval must be also in utc time.
@@ -74,7 +74,10 @@ def get_df_from_influxdb(
             time_interval, str_format=Parameter.UTC_DATETIME_FORMAT, check_before_utc_now=check_before_utc_now
         )
 
-    pandas_timestep = timestep_conversion(timestep, pd_units=True)
+    pandas_timestep = timestep_conversion(
+        timestep, pd_units=True, check_length=check_timestep_length,
+        check_hour_subdivision=check_timestep_hour_subdivision
+    )
     complete_index = pandas.date_range(
         start=time_interval[0], end=time_interval[1], freq=pandas_timestep, closed='left'
     )

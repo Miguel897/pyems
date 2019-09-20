@@ -5,7 +5,7 @@ import pandas
 import datetime
 
 # Local application imports
-from pyems.config import Constant
+from pyems.config import Constant, Parameter
 from pyems.core.optimization.optimizer import Optimizer
 from pyems.core.system.system import System
 from pyems.core.entity.entity import Entity
@@ -37,7 +37,7 @@ class Simulation(Entity, metaclass=Singleton):
 
         self.current_time = current_time  # UTC time
         self.local_tz = pytz.timezone('Europe/Amsterdam')
-        self.logger = logging.getLogger("ems.simulation.Simulation")
+        self.logger = logging.getLogger(f"{Parameter.PACKAGE_NAME}.Simulation")
 
     @property
     def optimizer(self):
@@ -178,6 +178,8 @@ class Simulation(Entity, metaclass=Singleton):
         time_config = self.get_time_configuration()
         self.system.prepare_to_optimize(config=time_config)
         self.results = self.optimizer.solve(system=self.system, config=time_config)
+
+        return self.results
 
     def clear(self):
         self.start, self.end, self.periods, self.interval = None, None, None, None

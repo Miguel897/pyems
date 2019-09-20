@@ -174,7 +174,10 @@ class System(Entity):
         self.compute_total_stochastic_electrical_generation(prediction_interval, simulation_periods)
 
         if self.has_battery:
-            self.get_battery_object().assess_final_soc(current_time, day_ahead=2)
+            battery = self.get_battery_object()
+            battery.get_initial_soc(prediction_interval=prediction_interval)
+            battery.get_final_soc(prediction_interval=prediction_interval)
+
         if self.has_external_grid:
             self.get_external_grid_object().get_prices(prediction_interval)
 

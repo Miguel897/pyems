@@ -269,7 +269,7 @@ class ElectricalBattery(BaseSystemComponent):
     def __init__(
             self, name='battery', timestep=None, batt_C=None, soc_0=None, soc_l=None, soc_lb=None, soc_ub=None,
             batt_chrg_speed=None, batt_dis_speed=None, batt_chrg_per=None, batt_dis_per=None, data_handler=None,
-            initial_soc_label=None, final_soc_labels=None
+            initial_soc_label=None, final_soc_label=None
     ):
         super().__init__(name=name, entity_type=ElectricalType.BATTERY, timestep=timestep)
         self.batt_C = batt_C  # (kWh) Capacity of the battery
@@ -283,7 +283,7 @@ class ElectricalBattery(BaseSystemComponent):
         self.batt_dis_per = batt_dis_per  # (%) Disharging performance
         self.target_soc = None
         self.initial_soc_label = initial_soc_label
-        self.final_soc_labels = final_soc_labels
+        self.final_soc_label = final_soc_label
         self._data_handler = weakref.ref(data_handler)
 
     @property
@@ -300,27 +300,16 @@ class ElectricalBattery(BaseSystemComponent):
     def data_handler(self, data_handler):
         self.data_handler = weakref.ref(data_handler)
 
-    def get_initial_soc(self):
-        self.soc_0 = self.data_handler.get_data_point(labels=self.initial_soc_label)
-
-    def assess_final_soc(self, current_time, day_ahead=2):
-        prediction_interval = [current_time, current_time + datetime.timedelta(days=day_ahead)]
-
-        solar_energy = self.data_handler.get_data_series(
-            labels=self.final_soc_labels, prediction_interval=prediction_interval
+    def get_initial_soc(self, prediction_interval):
+        self.soc_0 = self.data_handler.get_data_point(
+            labels=self.initial_soc_label, prediction_interval=prediction_interval
         )
-        mean = numpy.mean(solar_energy.values)
 
-        # Higher value of average sunpower for the next days means less battery SOC required. Tune this values with
-        # a more detailed analysis.
+    def get_final_soc(self, prediction_interval):
 
-        # todo: improve final soc assessment
-        if mean >= 225:
-            self.soc_l = 0.4
-        elif mean >= 175:
-            self.soc_l = 0.6
-        else:
-            self.soc_l = 0.8
+        self.soc_l = self.data_handler.get_data_point(
+            labels=self.final_soc_label, prediction_interval=prediction_interval
+        )
 
     def soc_to_energy(self, soc_delta):
 

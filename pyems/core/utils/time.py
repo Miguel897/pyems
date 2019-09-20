@@ -94,7 +94,7 @@ def check_time_interval(
         for t in time_interval:
             if check_before_utc_now:
                 if t > now:
-                    raise ValueError('At least one of the date of the time interval is not a past date. ')
+                    raise ValueError('At least one of the dates of the time interval is not a past date.')
             elif check_after_utc_now:
                 if t < now:
                     raise ValueError('At least one of the datetime in the time interval is not a future date.')
@@ -138,7 +138,16 @@ def timestep_match(timestep):
     return re.match(r"(^[\d]+)([a-z]+)", timestep, flags=re.I)  # int
 
 
-def timestep_to_seconds(timestep):
+def timestep_to_seconds(timestep, check_length=True, check_hour_subdivision=True):
+
+    second_conversion = check_timestep(
+        timestep, check_length=check_length, check_hour_subdivision=check_hour_subdivision,
+    )
+
+    return second_conversion
+
+
+def _timestep_to_seconds_no_check(timestep):
 
     match = timestep_match(timestep)
     if match:
@@ -153,11 +162,6 @@ def timestep_to_seconds(timestep):
         raise ValueError('Invalid timestep.')
 
     second_conversion = step * SHORT_UNIT_CONVERSION[time_unit]
-
-    if not (1 * Constant.MINUTE_SECONDS <= second_conversion <= 1 * Constant.HOUR_SECONDS):
-        raise ValueError('The timestep must be between 1 minute and 1 hour.')
-    if Constant.HOUR_SECONDS % second_conversion != 0:
-        raise ValueError('The timestep must be the result of dividing 1 hour in equal intervals.')
 
     return second_conversion
 
@@ -187,12 +191,14 @@ def time_unit_conversion(time_unit, std_units=False, pd_units=False):
     return unit_conversion[time_unit]
 
 
-def timestep_conversion(timestep, std_units=False, pd_units=False):
+def timestep_conversion(timestep, std_units=False, pd_units=False, check_length=True, check_hour_subdivision=True):
 
     if not(bool(std_units) != bool(pd_units)):
         raise ValueError('One and only one type of conversion should be selected.')
 
-    check_timestep(timestep)
+    check_timestep(
+        timestep, check_length=check_length, check_hour_subdivision=check_hour_subdivision,
+    )
 
     match = timestep_match(timestep)
     if match:
@@ -279,8 +285,15 @@ def local_to_utc(local_datetime, local_tz, output='dt'):
     return utc_time
 
 
-def check_timestep(timestep):
-    timestep_to_seconds(timestep)  # The test are performed inside that function
+def check_timestep(timestep, check_length=True, check_hour_subdivision=True):
+    second_conversion = _timestep_to_seconds_no_check(timestep)
+
+    if check_length and not (1 * Constant.MINUTE_SECONDS <= second_conversion <= 1 * Constant.HOUR_SECONDS):
+        raise ValueError('The timestep must be between 1 minute and 1 hour.')
+    if check_hour_subdivision and (Constant.HOUR_SECONDS % second_conversion != 0):
+        raise ValueError('The timestep must be the result of dividing 1 hour in equal intervals.')
+
+    return second_conversion
 
 
 def find_next_step_start(current_time, timestep):

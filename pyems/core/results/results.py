@@ -11,7 +11,7 @@ from pyems.core.iodata.ioinflux import write_point_to_influxdb
 class Results(Entity):
     """This class represents the results of the optimization model in a more user friendly. This class handles the
     output process to files and database and also is though to take care of plotting the solution."""
-    def __init__(self, output_data, target_soc, initial_soc=None, timestamp_label=None):
+    def __init__(self, output_data, target_soc, initial_soc=None, timestamp=None):
         super().__init__(name='Results', entity_type='results')
 
         self.raw_results = output_data
@@ -19,10 +19,10 @@ class Results(Entity):
         self.initial_soc = initial_soc
         self.local_tz = pytz.timezone(Setting.time_zone)
         self.logger = logging.getLogger(f'{Parameter.PACKAGE_NAME}.Results')
-        self.timestamp_label = timestamp_label.strftime(Parameter.FILE_DATETIME_FORMAT)
+        self.timestamp = timestamp.strftime(Parameter.FILE_DATETIME_FORMAT)
 
     def write_results_to_file(self, file_name='results.csv', file_path=''):
-        file_name = self.timestamp_label + '_' + file_name
+        file_name = self.timestamp + '_' + file_name
         self.logger.info(f'Writing results to {file_name} file.')
         display_results = self.raw_results.copy()
         display_results.index = display_results.index.tz_localize(pytz.utc).tz_convert(self.local_tz)

@@ -303,11 +303,9 @@ class Optimizer(Entity):
         
         if (solver_status == SolSt.ok) and (solver_termination_condition == TermCond.optimal):
             solver_summary = "optimal"
-            print("Optimal solution found.")
             self.logger.info("Optimal solution found.")
         elif solver_termination_condition == TermCond.infeasible:
             solver_summary = "infeasible"
-            print("Infeasible problem.")
             self.logger.error('Infeasible probelm.')
         else:
             solver_summary = "other"
@@ -396,7 +394,7 @@ class Optimizer(Entity):
 
         return results
 
-    def check_solution_physical_validity(self, tolerance=1e-2, config=None):
+    def check_solution_physical_validity(self, config, tolerance=1e-2):
 
         # Check that the solution has physical sense and therefore there is no
         # evident mistake in the optimization model.
@@ -457,7 +455,7 @@ class Optimizer(Entity):
 
         self.logger.info('Creating results object.')
 
-        return Results(output_data=self.results, target_soc=self.target_soc)
+        return Results(output_data=self.results, target_soc=self.target_soc, timestamp=config['start'])
 
     def clear(self):
         self.optimization_model = None

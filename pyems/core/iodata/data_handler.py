@@ -64,10 +64,20 @@ class BaseDataHandler(Entity):
 
     def get_data_point(self, labels, prediction_interval=None, **kwargs):
 
-        try:
-            labels[:0]  # Duck test for list-like
+        if isinstance(labels, str):  # In case of a unique label
+            label = labels
+            if label not in self._point_dispatcher.keys():
+                raise KeyError(f'Unable to find the handler of the label: {label}.')
 
-            container = {}
+            point = self._point_dispatcher[label](
+                prediction_interval=prediction_interval, **kwargs
+            )
+
+            return point
+
+        else:  # In case of a list of labels
+            labels[:0]  # Duck test for list-like
+            container = []
             for label in labels:
                 if label not in self._point_dispatcher.keys():
                     raise KeyError(f'Unable to find the handler of the label: {label}.')
@@ -76,21 +86,9 @@ class BaseDataHandler(Entity):
                     prediction_interval=prediction_interval, **kwargs
                 )
 
-                container[label] = point
+                container.append(point)
 
             return container
-
-        except TypeError:
-            if isinstance(labels, str):
-                label = labels
-                if label not in self._point_dispatcher.keys():
-                    raise KeyError(f'Unable to find the handler of the label: {label}.')
-
-                point = self._point_dispatcher[label](
-                    prediction_interval=prediction_interval, **kwargs
-                )
-
-                return point
 
     def add_series_dispatcher(self, dispatcher):
         self._series_dispatcher = dispatcher
